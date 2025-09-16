@@ -1,0 +1,19 @@
+{
+  "name": "qa_advanced",
+  "description": "Preguntas y respuestas con verificación de formato y contenido.",
+  "cases": [
+    {
+      "id": "math_simple",
+      "prompt": "Resuelve: 12 + 23 = ? Responde solo con un número.",
+      "expected": {"must_include": ["35"], "must_not_include": ["="], "format": {"max_tokens": 3}}
+    },
+    {
+      "id": "instruction_following",
+      "prompt": "Contesta en español, 2 oraciones, empezando por 'Respuesta:'. Tema: importancia del versionado.",
+      "expected": {
+        "must_include": ["Respuesta:", "versionado"],
+        "format": {}
+      }
+    }
+  ]
+}

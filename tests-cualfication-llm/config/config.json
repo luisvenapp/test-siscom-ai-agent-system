@@ -1,0 +1,42 @@
+{
+  "iterations": 10,
+  "concurrency": 1,
+  "timeout_seconds": 120,
+  "log_dir": "logs",
+  "reports_dir": "reports",
+  "scenarios_dir": "scenarios",
+  "agents": [
+    {
+      "name": "ollama_llama3_8b",
+      "type": "ollama",
+      "base_url": "http://localhost:11434",
+      "model": "llama3:8b",
+      "parameters": {"temperature": 0.2, "top_p": 0.9, "num_predict": 512}
+    },
+    {
+      "name": "generic_http_agent",
+      "type": "http",
+      "base_url": "http://localhost:8000/v1/chat/completions",
+      "headers": {"Authorization": "Bearer CHANGE_ME"},
+      "parameters": {"model": "local-model", "temperature": 0.2}
+    },
+    {
+      "name": "cli_local_agent",
+      "type": "cli",
+      "cmd": "python",
+      "args": ["-c", "print(input())"],
+      "prompt_stdin": true
+    }
+  ],
+  "rubrics": {
+    "weights": {
+      "exactitud": 0.35,
+      "completitud": 0.2,
+      "relevancia": 0.2,
+      "claridad": 0.15,
+      "formato": 0.1,
+      "penalizacion_tiempo": -0.05
+    },
+    "thresholds": {"aprobado": 0.7, "excelente": 0.9}
+  }
+}

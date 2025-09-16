@@ -1,0 +1,22 @@
+version: '3.8'
+services:
+  llm-tests:
+    build: .
+    image: local/llm-tests:latest
+    container_name: llm-tests
+    environment:
+      - PYTHONUNBUFFERED=1
+    # Monta los escenarios, config y recoge reportes/logs en el host
+    volumes:
+      - ./config:/app/config:ro
+      - ./scenarios:/app/scenarios:ro
+      - ./logs:/app/logs
+      - ./reports:/app/reports
+    # Si tienes un servidor Ollama local en el host: expón el puerto y usa host.docker.internal
+    # networks: [default]
+    # extra_hosts:
+    #   - "host.docker.internal:host-gateway"
+    # environment:
+    #   - OLLAMA_BASE_URL=http://host.docker.internal:11434
+    #   - HTTP_AGENT_URL=http://host.docker.internal:8000/v1/chat/completions
+    command: ["python", "run_tests.py"]

@@ -1,0 +1,20 @@
+# This file defines output rails to check the bot's response.
+
+# Use the built-in self-check for toxicity, etc.
+# This requires no external LLM call.
+define flow self check output
+  $result = execute self_check_output(response=$last_bot_message)
+  if $result.is_unsafe
+    bot refuse to respond
+
+# You can add more specific checks for forbidden phrases.
+define bot response includes forbidden words
+  "I hate you"
+  "this is stupid"
+
+define flow check for forbidden words
+  if $last_bot_message contains any bot response includes forbidden words
+    bot refuse to respond
+
+define bot refuse to respond
+  "I apologize, but I am unable to provide a helpful response at this time. Please try rephrasing your request or asking about a different topic."

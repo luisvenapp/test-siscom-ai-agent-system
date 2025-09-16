@@ -1,0 +1,14 @@
+version: '3.8'
+services:
+  llm-tests-cli:
+    build: .
+    image: local/llm-tests:latest
+    container_name: llm-tests-cli
+    environment:
+      - PYTHONUNBUFFERED=1
+    volumes:
+      - ./config:/app/config:ro
+      - ./scenarios_cli:/app/scenarios:ro
+      - ./logs:/app/logs
+      - ./reports:/app/reports
+    command: ["python", "run_tests.py", "--config", "/app/config/config.cli.json"]

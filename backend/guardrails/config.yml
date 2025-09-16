@@ -1,0 +1,29 @@
+models: []
+
+rails:
+  input:
+    flows:
+      - self check input
+  output:
+    flows:
+      - self check output
+      # - check for forbidden words
+
+instructions:
+  - type: general
+    content: |
+      You are a helpful assistant.
+  - type: bot
+    content: |
+      Below are the messages that the bot can use to refuse to answer a question.
+
+      define bot refuse to respond
+        "I am sorry, but I cannot provide that response as it does not align with my communication guidelines."
+
+# actions:
+#   - name: check_forbidden_words
+#     parameters:
+#       forbidden_words:
+#         - "Maldito"
+#         - "Hijo de puta"
+#         - "Coño de tu madre"

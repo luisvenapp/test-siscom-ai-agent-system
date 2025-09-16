@@ -1,0 +1,28 @@
+{
+  "name": "demo_basic",
+  "description": "Pruebas básicas de QA y formato.",
+  "cases": [
+    {
+      "id": "qa_fact_1",
+      "prompt": "¿Cuál es la capital de Francia? Responde solo con el nombre de la ciudad.",
+      "expected": {
+        "must_include": ["París", "Paris"],
+        "must_not_include": ["Francia", "capital"],
+        "format": {"max_tokens": 3}
+      }
+    },
+    {
+      "id": "format_list_1",
+      "prompt": "Enumera 3 ventajas de usar control de versiones en formato lista con guiones.",
+      "expected": {
+        "must_include": ["-"],
+        "format": {"list": true, "min_items": 3}
+      }
+    },
+    {
+      "id": "follow_instruction_1",
+      "prompt": "Responde 'OK' exactamente si entendiste.",
+      "expected": {"exact_match_any": ["OK"]}
+    }
+  ]
+}

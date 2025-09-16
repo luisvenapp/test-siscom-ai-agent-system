@@ -1,0 +1,11 @@
+{
+  "name": "reasoning_short",
+  "description": "Razonamiento ligero con respuesta breve y control de formato.",
+  "cases": [
+    {
+      "id": "odd_even",
+      "prompt": "Si 7 es impar y 8 es par, ¿7+8 es par o impar? Responde 'par' o 'impar' solamente.",
+      "expected": {"exact_match_any": ["impar", "par"], "must_include": ["impar"], "format": {"max_tokens": 2}}
+    }
+  ]
+}

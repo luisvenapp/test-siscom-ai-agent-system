@@ -1,0 +1,16 @@
+{
+  "name": "format_and_json",
+  "description": "Validación de formato de lista y JSON estructurado.",
+  "cases": [
+    {
+      "id": "list_min_3",
+      "prompt": "Proporciona una lista con tres elementos en formato '- item'.",
+      "expected": {"format": {"list": true, "min_items": 3}}
+    },
+    {
+      "id": "json_kv",
+      "prompt": "Responde con un JSON que tenga las claves 'titulo' y 'valor'.",
+      "expected": {"format": {"json": true, "required_keys": ["titulo", "valor"]}}
+    }
+  ]
+}

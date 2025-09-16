@@ -1,0 +1,16 @@
+{
+  "name": "cli_echo",
+  "description": "Escenario de smoke-test usando agente CLI que ecoa el prompt.",
+  "cases": [
+    {
+      "id": "echo_short",
+      "prompt": "OK",
+      "expected": {"exact_match_any": ["OK"], "format": {"max_tokens": 3}}
+    },
+    {
+      "id": "echo_list",
+      "prompt": "- uno\n- dos\n- tres",
+      "expected": {"format": {"list": true, "min_items": 3}}
+    }
+  ]
+}

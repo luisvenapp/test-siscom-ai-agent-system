@@ -1,0 +1,129 @@
+services:
+  redpanda:
+    image: docker.redpanda.com/redpandadata/redpanda:v23.3.3
+    container_name: redpanda-prod
+    restart: unless-stopped
+    ports:
+      - "9092:9092"
+      - "9644:9644"
+    command:
+      - redpanda start
+      - --smp 1
+      - --memory 512M
+      - --overprovisioned
+      - --node-id 0
+      - --check=false
+      - --kafka-addr PLAINTEXT://0.0.0.0:9092
+      - --advertise-kafka-addr PLAINTEXT://redpanda:9092
+    volumes:
+      - redpanda_data_prod:/var/lib/redpanda
+    environment:
+      - KAFKA_ADVERTISED_LISTENERS=PLAINTEXT://redpanda:9092
+      - KAFKA_LISTENERS=PLAINTEXT://0.0.0.0:9092
+    deploy:
+      resources:
+        limits:
+          memory: 600M
+          cpus: "0.5"
+    networks:
+      - kafka-net
+
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: sisscom-app-prod
+    restart: always
+    ports:
+      - "8001:8001"
+    environment:
+      - DEBUG=false
+      - PROJECT_NAME=${PROJECT_NAME:-Siscom App GenAI Agent}
+      - PROJECT_VERSION=${PROJECT_VERSION:-0.1.0}
+      - LLM_DATABASE_POSTGRES_HOST=${LLM_DATABASE_POSTGRES_HOST}
+      - LLM_DATABASE_POSTGRES_USER=${LLM_DATABASE_POSTGRES_USER}
+      - LLM_DATABASE_POSTGRES_PASSWORD=${LLM_DATABASE_POSTGRES_PASSWORD}
+      - LLM_DATABASE_VECTOR_STORE_POSTGRES_DB=${LLM_DATABASE_VECTOR_STORE_POSTGRES_DB}
+      - KAFKA_BROKER_URL=${KAFKA_BROKER_URL}
+      - KAFKA_AGENT_TOPIC=${KAFKA_AGENT_TOPIC:-agent-chat}
+      - KAFKA_AGENT_RESPONSE_TOPIC=${KAFKA_AGENT_RESPONSE_TOPIC:-agent-chat-response}
+      - LANGFUSE_PUBLIC_KEY=${LANGFUSE_PUBLIC_KEY}
+      - LANGFUSE_SECRET_KEY=${LANGFUSE_SECRET_KEY}
+      - LANGFUSE_HOST=${LANGFUSE_HOST:-https://us.cloud.langfuse.com}
+      - LANGFUSE_DEBUG=false
+      - EMBEDDING_NAME=${EMBEDDING_NAME:-sentence-transformers/all-mpnet-base-v2}
+      - OPENAI_API_KEY=${OPENAI_API_KEY:-XXX}
+      - LLM_MODEL_NAME=${LLM_MODEL_NAME}
+      - DEEPSEEK_API_KEY=${DEEPSEEK_API_KEY}
+      - OLLAMA_API_BASE=${OLLAMA_API_BASE}
+      - DEFAULT_LOG_LEVEL=INFO
+      - DISABLE_JSON_LOGGING=true
+      - MPLCONFIGDIR=/tmp
+      - UVICORN_WORKERS=${UVICORN_WORKERS:-8}
+      - WEBHOOK_URL=${WEBHOOK_URL}
+      - WEBHOOK_BEARER_TOKEN=${WEBHOOK_BEARER_TOKEN}
+    volumes:
+      - ./cache/huggingface:/home/app/.cache/huggingface
+    depends_on:
+      - redpanda
+    deploy:
+      resources:
+        limits:
+          memory: 4G
+          cpus: "2.0"
+    networks:
+      - kafka-net
+
+  app2:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: sisscom-app-prod-2
+    restart: always
+    ports:
+      - "8002:8001"
+    environment:
+      - DEBUG=false
+      - PROJECT_NAME=${PROJECT_NAME:-Siscom App GenAI Agent}
+      - PROJECT_VERSION=${PROJECT_VERSION:-0.1.0}
+      - LLM_DATABASE_POSTGRES_HOST=${LLM_DATABASE_POSTGRES_HOST}
+      - LLM_DATABASE_POSTGRES_USER=${LLM_DATABASE_POSTGRES_USER}
+      - LLM_DATABASE_POSTGRES_PASSWORD=${LLM_DATABASE_POSTGRES_PASSWORD}
+      - LLM_DATABASE_VECTOR_STORE_POSTGRES_DB=${LLM_DATABASE_VECTOR_STORE_POSTGRES_DB}
+      - KAFKA_BROKER_URL=${KAFKA_BROKER_URL}
+      - KAFKA_AGENT_TOPIC=${KAFKA_AGENT_TOPIC:-agent-chat}
+      - KAFKA_AGENT_RESPONSE_TOPIC=${KAFKA_AGENT_RESPONSE_TOPIC:-agent-chat-response}
+      - LANGFUSE_PUBLIC_KEY=${LANGFUSE_PUBLIC_KEY}
+      - LANGFUSE_SECRET_KEY=${LANGFUSE_SECRET_KEY}
+      - LANGFUSE_HOST=${LANGFUSE_HOST:-https://us.cloud.langfuse.com}
+      - LANGFUSE_DEBUG=false
+      - EMBEDDING_NAME=${EMBEDDING_NAME:-sentence-transformers/all-mpnet-base-v2}
+      - OPENAI_API_KEY=${OPENAI_API_KEY:-XXX}
+      - LLM_MODEL_NAME=${LLM_MODEL_NAME}
+      - DEEPSEEK_API_KEY=${DEEPSEEK_API_KEY}
+      - OLLAMA_API_BASE=${OLLAMA_API_BASE}
+      - DEFAULT_LOG_LEVEL=INFO
+      - DISABLE_JSON_LOGGING=true
+      - MPLCONFIGDIR=/tmp
+      - UVICORN_WORKERS=${UVICORN_WORKERS:-8}
+      - WEBHOOK_URL=${WEBHOOK_URL}
+      - WEBHOOK_BEARER_TOKEN=${WEBHOOK_BEARER_TOKEN}
+    volumes:
+      - ./cache/huggingface:/home/app/.cache/huggingface
+    depends_on:
+      - redpanda
+    deploy:
+      resources:
+        limits:
+          memory: 4G
+          cpus: "2.0"
+    networks:
+      - kafka-net
+
+volumes:
+  redpanda_data_prod:
+    driver: local
+
+networks:
+  kafka-net:
+    driver: bridge

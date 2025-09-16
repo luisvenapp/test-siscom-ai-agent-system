@@ -1,0 +1,47 @@
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: siscom-app-prod
+    restart: always
+    ports:
+      - "8001:8001"
+    environment:
+      - DEBUG=${DEBUG}
+      - PROJECT_NAME=${PROJECT_NAME:-Siscom App GenAI Agent}
+      - PROJECT_VERSION=${PROJECT_VERSION:-0.1.0}
+      - LLM_DATABASE_POSTGRES_HOST=${LLM_DATABASE_POSTGRES_HOST}
+      - LLM_DATABASE_POSTGRES_USER=${LLM_DATABASE_POSTGRES_USER}
+      - LLM_DATABASE_POSTGRES_PASSWORD=${LLM_DATABASE_POSTGRES_PASSWORD}
+      - LLM_DATABASE_VECTOR_STORE_POSTGRES_DB=${LLM_DATABASE_VECTOR_STORE_POSTGRES_DB}
+      - KAFKA_BROKER_URL=${KAFKA_BROKER_URL}
+      - KAFKA_AGENT_TOPIC=${KAFKA_AGENT_TOPIC}
+      - KAFKA_AGENT_RESPONSE_TOPIC=${KAFKA_AGENT_RESPONSE_TOPIC}
+      - LANGFUSE_PUBLIC_KEY=${LANGFUSE_PUBLIC_KEY}
+      - LANGFUSE_SECRET_KEY=${LANGFUSE_SECRET_KEY}
+      - LANGFUSE_HOST=${LANGFUSE_HOST}
+      - LANGFUSE_DEBUG=${LANGFUSE_DEBUG}
+      - EMBEDDING_NAME=${EMBEDDING_NAME:-sentence-transformers/all-mpnet-base-v2}
+      - LLM_MODEL_NAME=${LLM_MODEL_NAME}
+      - OLLAMA_API_BASE=${OLLAMA_API_BASE}
+      - DEFAULT_LOG_LEVEL=${DEFAULT_LOG_LEVEL}
+      - DISABLE_JSON_LOGGING=${DISABLE_JSON_LOGGING}
+      - MPLCONFIGDIR=/tmp
+      - UVICORN_WORKERS=${UVICORN_WORKERS:-2}
+      - WEBHOOK_URL=${WEBHOOK_URL}
+      - WEBHOOK_BEARER_TOKEN=${WEBHOOK_BEARER_TOKEN}
+    deploy:
+      resources:
+        limits:
+          memory: 4G
+          cpus: "2.0"
+    networks:
+      - app-net
+    dns:
+      - 172.16.6.5
+      - 172.16.6.6
+
+networks:
+  app-net:
+    driver: bridge

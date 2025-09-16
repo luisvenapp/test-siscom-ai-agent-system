@@ -1,0 +1,84 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+certs/*
+
+# C extensions
+*.so
+
+# Virtual environments
+.venv/
+venv/
+ENV/
+env/
+env.bak/
+*.env
+
+# Logs
+*.log
+
+# Environment variables
+.env
+.env.*
+
+# Docker files
+docker-compose.override.yml
+
+# Unit test / coverage reports
+htmlcov/
+.tox/
+.nox/
+.coverage
+.coverage.*
+.cache
+nosetests.xml
+coverage.xml
+*.cover
+*.py,cover
+.hypothesis/
+
+# Jupyter Notebook
+.ipynb_checkpoints
+
+# pyenv
+.python-version
+
+# mypy
+.mypy_cache/
+.dmypy.json
+dmypy.json
+
+# Pyre type checker
+.pyre/
+
+# PyLint
+.pylint.d/
+
+# VS Code
+.vscode/
+
+# IDEs
+.idea/
+*.sublime-project
+*.sublime-workspace
+
+# macOS
+.DS_Store
+
+# Bash scripts outputs
+*.sh~
+
+# Build
+build/
+dist/
+*.egg-info/
+.eggs/
+
+# Kafka local or message files
+*.kafka
+*.msgpack
+*.avro
+
+# Misc
+send_message.sh

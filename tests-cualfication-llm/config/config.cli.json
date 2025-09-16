@@ -1,0 +1,28 @@
+{
+  "iterations": 10,
+  "concurrency": 1,
+  "timeout_seconds": 30,
+  "log_dir": "logs",
+  "reports_dir": "reports",
+  "scenarios_dir": "scenarios",
+  "agents": [
+    {
+      "name": "cli_local_agent",
+      "type": "cli",
+      "cmd": "python",
+      "args": ["-c", "print(input())"],
+      "prompt_stdin": true
+    }
+  ],
+  "rubrics": {
+    "weights": {
+      "exactitud": 0.35,
+      "completitud": 0.2,
+      "relevancia": 0.2,
+      "claridad": 0.15,
+      "formato": 0.1,
+      "penalizacion_tiempo": -0.05
+    },
+    "thresholds": {"aprobado": 0.7, "excelente": 0.9}
+  }
+}
