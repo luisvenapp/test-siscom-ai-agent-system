@@ -66,6 +66,10 @@ class Orchestrator:
                 start = time.perf_counter()
                 result = agent.infer(prompt, timeout)
                 elapsed = time.perf_counter() - start
+                # Si la respuesta no es ok y aún quedan reintentos, reintentar
+                if not result.get("ok", False) and attempt < retries:
+                    attempt += 1
+                    continue
                 break
             except Exception as e:
                 last_exc = e
