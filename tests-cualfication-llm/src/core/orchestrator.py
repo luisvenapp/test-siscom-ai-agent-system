@@ -158,6 +158,13 @@ class Orchestrator:
         scenarios = load_scenarios(self.scenarios_dir)
         agents = self.build_agents()
 
+        total_cases = sum(len(s.get("cases", [])) for s in scenarios)
+        total_tasks = max(0, len(agents) * total_cases * max(1, iterations))
+        progress_step = max(1, total_tasks // 20)  # ~5% steps
+        completed = 0
+
+        print(f"[{self.timestamp}] Starting tests: agents={len(agents)}, scenarios={len(scenarios)}, cases={total_cases}, iterations={iterations}, total={total_tasks}, mode={agent_execution}, concurrency={concurrency}, within_agent_concurrency={within_agent_concurrency}", flush=True)
+
         all_records: List[Dict[str, Any]] = []
 
         if agent_execution == "parallel" and concurrency > 1:
@@ -175,6 +182,10 @@ class Orchestrator:
                         all_records.append(rec)
                     except Exception as e:
                         all_records.append({"ok": False, "error": str(e)})
+                    finally:
+                        completed += 1
+                        if completed % progress_step == 0 or completed == total_tasks:
+                            print(f"Progress: {completed}/{total_tasks} ({(completed/max(1,total_tasks))*100:.1f}%)", flush=True)
         else:
             # Secuencial por agente; si concurrency>1, paraleliza solo dentro del agente actual
             for agent in agents:
@@ -191,17 +202,27 @@ class Orchestrator:
                                 all_records.append(rec)
                             except Exception as e:
                                 all_records.append({"ok": False, "error": str(e)})
+                            finally:
+                                completed += 1
+                                if completed % progress_step == 0 or completed == total_tasks:
+                                    print(f"Progress: {completed}/{total_tasks} ({(completed/max(1,total_tasks))*100:.1f}%)", flush=True)
+                    print(f"Agent completed: {agent.name}", flush=True)
                 else:
                     for scenario in scenarios:
                         for case in scenario.get("cases", []):
                             for i in range(1, iterations + 1):
                                 rec = self._run_single(agent, scenario, case, i, timeout, weights)
                                 all_records.append(rec)
+                                completed += 1
+                                if completed % progress_step == 0 or completed == total_tasks:
+                                    print(f"Progress: {completed}/{total_tasks} ({(completed/max(1,total_tasks))*100:.1f}%)", flush=True)
+                    print(f"Agent completed: {agent.name}", flush=True)
 
         # Persistimos resultados crudos
         raw_path = os.path.join(self.reports_dir, f"raw_results__{self.timestamp}.json")
         with open(raw_path, 'w', encoding='utf-8') as f:
             f.write(json_dumps(all_records))
+        print(f"Wrote raw results to: {raw_path}", flush=True)
 
         return {"timestamp": self.timestamp, "records": all_records}
 

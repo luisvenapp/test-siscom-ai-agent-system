@@ -1,0 +1,42 @@
+{
+  "iterations": 2,
+  "concurrency": 1,
+  "within_agent_concurrency": 1,
+  "agent_execution": "sequential",
+  "timeout_seconds": 60,
+  "max_model_fail_retries": 1,
+  "log_dir": "logs",
+  "reports_dir": "reports",
+  "scenarios_dir": "scenarios_smoke",
+  "agents": [
+    {
+      "name": "openai_gpt4o_mini",
+      "type": "openai",
+      "model": "gpt-4o-mini",
+      "parameters": {"temperature": 0.2}
+    },
+    {
+      "name": "deepseek_chat",
+      "type": "deepseek",
+      "model": "deepseek-chat",
+      "parameters": {"temperature": 0.2}
+    },
+    {
+      "name": "gemini_15_flash",
+      "type": "gemini",
+      "model": "gemini-1.5-flash",
+      "parameters": {"temperature": 0.2, "top_p": 0.95}
+    }
+  ],
+  "rubrics": {
+    "weights": {
+      "exactitud": 0.35,
+      "completitud": 0.2,
+      "relevancia": 0.2,
+      "claridad": 0.15,
+      "formato": 0.1,
+      "penalizacion_tiempo": -0.05
+    },
+    "thresholds": {"aprobado": 0.7, "excelente": 0.9}
+  }
+}

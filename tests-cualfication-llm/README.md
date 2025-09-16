@@ -57,6 +57,7 @@ Quick start (Python 3.10+)
   - `reports/summary__<timestamp>.md`
   - `reports/summary__<timestamp>.json`
   - `reports/summary__<timestamp>.csv`
+  - `reports/dashboard__<timestamp>.html` (gráficos Plotly por agente)
 
 
 Requisitos

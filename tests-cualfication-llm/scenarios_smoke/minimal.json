@@ -1,0 +1,16 @@
+{
+  "name": "smoke_minimal",
+  "description": "Escenario mínimo para validar conectividad con 3 modelos",
+  "cases": [
+    {
+      "id": "ok_exact",
+      "prompt": "Responde exactamente: OK",
+      "expected": {"exact_match_any": ["OK"]}
+    },
+    {
+      "id": "list_3",
+      "prompt": "Devuelve una lista de 3 items en formato '- item'.",
+      "expected": {"format": {"list": true, "min_items": 3}}
+    }
+  ]
+}
