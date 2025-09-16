@@ -3,13 +3,13 @@
 Este paquete crea un entorno aislado para evaluar de forma profesional múltiples modelos/agents LLM locales bajo escenarios controlados, con medición cuantitativa, cualitativa y calificativa.
 
 Objetivos clave:
-- Orquestación de pruebas de principio a fin por agente, escenario e iteración (≥ 10 por agente).
+- Orquestación de pruebas de principio a fin por agente, escenario e iteración (≥ 10 por agente). Soporta ejecución secuencial por agente para benchmarking de múltiples modelos de Ollama.
 - Métricas cuantitativas: latencia (p50/p95), throughput, longitud de respuesta, variabilidad entre iteraciones, errores.
 - Métricas cualitativas: cobertura de keywords requeridas/prohibidas, formato, cumplimiento de instrucciones, coherencia básica.
 - Métricas calificativas: scoring ponderado por rúbricas (exactitud, completitud, relevancia, claridad, estilo, penalización por tiempo excedido).
 - Logging por test con convención: <agentName>__<timestamp>__iter-<N>.log
 - Reportes agregados por agente y por escenario en JSON/CSV/Markdown.
-- Adaptadores de agente: Ollama (HTTP), HTTP genérico, CLI local. Extensible.
+- Adaptadores de agente: Ollama (HTTP), OpenAI, DeepSeek, Google Gemini (AI Studio, no Vertex), HTTP genérico (simple/OpenAI), CLI local. Extensible.
 
 Estructura
 - config/ → configuración principal y ejemplos
@@ -45,9 +45,19 @@ flowchart LR
 
 Quick start (Python 3.10+)
 1) Ajusta config/config.json (agentes, iteraciones, timeouts, etc.)
+   - Puedes mezclar agentes Ollama, OpenAI, DeepSeek y Gemini.
+   - Usa agent_execution: "sequential" para benchmarking modelo por modelo.
 2) Añade/modifica escenarios en scenarios/*.json
 3) Ejecuta: `python run_tests.py`
-4) Revisa `logs/` y `reports/`
+- Benchmarks rápidos (PowerShell):
+  - Ollama: `./scripts/run_benchmark_ollama.ps1`
+  - Privados (OpenAI/DeepSeek/Gemini): `./scripts/run_benchmark_private.ps1`
+  - Mixto: `./scripts/run_benchmark_mixed.ps1`
+- Ver resultados:
+  - `reports/summary__<timestamp>.md`
+  - `reports/summary__<timestamp>.json`
+  - `reports/summary__<timestamp>.csv`
+
 
 Requisitos
 - Solo usa librerías estándar por defecto (urllib, json, time, concurrent.futures). Opcionalmente puedes instalar librerías para métricas avanzadas, pero el sistema funciona sin dependencias externas.

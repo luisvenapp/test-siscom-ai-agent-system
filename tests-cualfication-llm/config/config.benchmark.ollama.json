@@ -1,6 +1,8 @@
 {
   "iterations": 10,
   "concurrency": 1,
+  "within_agent_concurrency": 2,
+  "agent_execution": "sequential",
   "timeout_seconds": 120,
   "log_dir": "logs",
   "reports_dir": "reports",
@@ -14,17 +16,18 @@
       "parameters": {"temperature": 0.2, "top_p": 0.9, "num_predict": 512}
     },
     {
-      "name": "backend_http_completion",
-      "type": "http",
-      "base_url": "http://localhost:8001/v1/test-completion",
-      "parameters": {"temperature": 0.2}
+      "name": "ollama_phi3",
+      "type": "ollama",
+      "base_url": "http://localhost:11434",
+      "model": "phi3:latest",
+      "parameters": {"temperature": 0.2, "top_p": 0.9, "num_predict": 512}
     },
     {
-      "name": "cli_local_agent",
-      "type": "cli",
-      "cmd": "python",
-      "args": ["-c", "print(input())"],
-      "prompt_stdin": true
+      "name": "ollama_qwen2_7b",
+      "type": "ollama",
+      "base_url": "http://localhost:11434",
+      "model": "qwen2:7b",
+      "parameters": {"temperature": 0.2, "top_p": 0.9, "num_predict": 512}
     }
   ],
   "rubrics": {

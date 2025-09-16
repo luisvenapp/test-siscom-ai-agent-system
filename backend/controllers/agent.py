@@ -14,8 +14,8 @@ from langfuse import Langfuse
 from services.agent.multi_agents import MultiAgents
 from schemas.langfuse import LangfuseReceiveFeedbackRequest, LangfuseReceiveFeedbackResponse
 from conf import settings
-
-from aiokafka import AIOKafkaProducer
+from services.llm_manager import LLMManager
+from langchain_core.prompts import ChatPromptTemplate
 
 router = APIRouter(
     tags=["Agent"],
@@ -141,7 +141,25 @@ async def generate_message_suggestions(
     except Exception as e:
         logger.exception(f"Error generating topic suggestions: {e}")
         raise HTTPException(status_code=500, detail=f"Error generating topic suggestions: {e}")
-    
+
+
+@router.post("/test-completion", summary="Simple LLM completion for testing")
+async def test_completion(payload: dict = Body(...)) -> dict:
+    """
+    Devuelve una inferencia directa del LLM a partir de 'prompt'.
+    Compatible con el HttpAgent del sistema de testing.
+    """
+    prompt = payload.get("prompt", "")
+    if not prompt:
+        raise HTTPException(status_code=400, detail="Campo 'prompt' requerido")
+
+    llm = LLMManager(settings.LLM_MODEL_NAME)
+    template = ChatPromptTemplate.from_messages([("user", "{prompt}")])
+    try:
+        text = await llm.ainvoke(template, prompt=prompt)
+        return {"response": text}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"LLM error: {e}")
     
 @router.post("/generate-room-suggestion", summary="Generate Room Suggestions (Kafka)")
 async def generate_room_suggestions(

@@ -46,27 +46,66 @@ Parámetros clave:
 - `timeout_seconds`: timeout por inferencia.
 - `log_dir`, `reports_dir`, `scenarios_dir`: rutas relativas dentro de la carpeta de tests.
 - `agents`: lista de agentes. Ejemplos:
-  - Ollama:
+  - Ollama (secuencial por modelo):
     ```json
     {
-      "name": "ollama_llama3_8b",
-      "type": "ollama",
-      "base_url": "http://localhost:11434",
-      "model": "llama3:8b",
-      "parameters": {"temperature": 0.2, "top_p": 0.9, "num_predict": 512}
+      "iterations": 10,
+      "concurrency": 2,
+      "agent_execution": "sequential",
+      "agents": [
+        {"name": "ollama_llama3_8b", "type": "ollama", "base_url": "http://localhost:11434", "model": "llama3:8b", "parameters": {"temperature": 0.2, "top_p": 0.9, "num_predict": 512}},
+        {"name": "ollama_phi3",       "type": "ollama", "base_url": "http://localhost:11434", "model": "phi3:latest", "parameters": {"temperature": 0.2, "top_p": 0.9, "num_predict": 512}},
+        {"name": "ollama_qwen2",      "type": "ollama", "base_url": "http://localhost:11434", "model": "qwen2:7b", "parameters": {"temperature": 0.2, "top_p": 0.9, "num_predict": 512}}
+      ]
     }
     ```
-  - HTTP genérico:
+  - OpenAI (Chat Completions):
     ```json
     {
-      "name": "generic_http_agent",
+      "name": "openai_gpt4o",
+      "type": "openai",
+      "model": "gpt-4o-mini",
+      "parameters": {"temperature": 0.2}
+    }
+    ```
+  - DeepSeek (Chat Completions compatible):
+    ```json
+    {
+      "name": "deepseek_chat",
+      "type": "deepseek",
+      "model": "deepseek-chat",
+      "parameters": {"temperature": 0.2}
+    }
+    ```
+  - Google Gemini (AI Studio, no Vertex):
+    ```json
+    {
+      "name": "gemini_flash",
+      "type": "gemini",
+      "model": "gemini-1.5-flash",
+      "parameters": {"temperature": 0.2, "top_p": 0.95}
+    }
+    ```
+  - HTTP genérico (esquema simple por defecto):
+    ```json
+    {
+      "name": "backend_http_completion",
+      "type": "http",
+      "base_url": "http://localhost:8001/v1/test-completion",
+      "parameters": {"temperature": 0.2}
+    }
+    ```
+    - Esquema OpenAI opcional (usar `schema: "openai"` + `messages`):
+    ```json
+    {
+      "name": "openai_style_agent",
       "type": "http",
       "base_url": "http://localhost:8000/v1/chat/completions",
-      "headers": {"Authorization": "Bearer CHANGE_ME"},
-      "parameters": {"model": "local-model", "temperature": 0.2}
+      "parameters": {"model": "local-model", "temperature": 0.2},
+      "schema": "openai"
     }
     ```
-    Nota: si tu API usa esquema “messages” (estilo OpenAI), adapta `HttpAgent` o pídenos que agreguemos un adaptador dedicado.
+    Nota: `HttpAgent` soporta ahora `schema=openai` y el esquema simple basado en `prompt`.
   - CLI local:
     ```json
     {

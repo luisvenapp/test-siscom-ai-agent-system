@@ -2,13 +2,10 @@ from sqlalchemy import create_engine, inspect, text
 from sqlalchemy.orm import sessionmaker
 from typing import List, Dict, Any
 
-import sys
-import os
-sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-
 from conf import settings
 from core.logging_config import get_logger
 from db.pg_vector import PGVector
+from langchain_community.embeddings import HuggingFaceEmbeddings
 from services.llm_manager import LLMManager
 from langchain_core.prompts import ChatPromptTemplate
 
@@ -31,12 +28,13 @@ class VectorDocumentExtractor:
             collection_name (str): The name of the collection in the vector store.
             db_connection_string (str): The connection string for the PostgreSQL database.
         """
-        self.embedding_manager = LiteLLMManager()
         self.llm_manager = LLMManager()
+        self.embeddings = HuggingFaceEmbeddings(model_name=settings.EMBEDDING_NAME)
         self.vector_store = PGVector(
+            embeddings=self.embeddings,
             collection_name=collection_name,
             connection=db_connection_string,
-            embedding_function=self.embedding_manager,
+            use_jsonb=True,
         )
         self.keyword_extraction_prompt = ChatPromptTemplate.from_messages([
             ("system", "You are an expert in analyzing conversations. Your task is to extract the most relevant and important keywords or topics from the following text. Return them as a comma-separated list."),
@@ -85,7 +83,8 @@ class VectorDocumentExtractor:
             return []
 
         conversation_text = "\n".join(messages)
-        conversation_embedding = await self.embedding_manager.aembed_query(conversation_text)
+        # Embed conversation (sync embed inside async; acceptable here, adjust to executor if needed)
+        conversation_embedding = self.vector_store.embeddings.embed_query(conversation_text)
 
         # 1. Initial semantic search
         logger.info("Performing initial semantic search on conversation.")
@@ -104,7 +103,7 @@ class VectorDocumentExtractor:
                 return [{"page_content": doc.page_content, "metadata": doc.metadata, "score": score} for doc, score in search_results]
 
             keyword_text = " ".join(keywords)
-            keyword_embedding = await self.embedding_manager.aembed_query(keyword_text)
+            keyword_embedding = self.vector_store.embeddings.embed_query(keyword_text)
 
             # 3. Keyword-based search
             logger.info("Performing keyword-based search.")

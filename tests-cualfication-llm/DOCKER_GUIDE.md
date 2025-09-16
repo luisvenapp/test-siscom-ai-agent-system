@@ -32,7 +32,7 @@ docker compose up --build
   extra_hosts:
     - "host.docker.internal:host-gateway"
   ```
-- Cambia `config/config.json` para apuntar a tus backends (ej. Ollama, HTTP). Ejemplo:
+- Cambia `config/config.json` para apuntar a tus backends (ej. Ollama, HTTP). Ejemplo (Ollama):
   ```json
   {
     "agents": [
@@ -46,13 +46,20 @@ docker compose up --build
     ]
   }
   ```
+- Para probar el backend FastAPI con el endpoint auxiliar `/v1/test-completion`, usa la config `config.backend.json` (incluida) que referencia `http://host.docker.internal:8001`.
 
 6) Ejecutar con configuración alternativa
 - Puedes empaquetar una config distinta y pasarla como argumento:
   ```bash
-  docker run --rm -v %cd%/config:/app/config:ro -v %cd%/scenarios:/app/scenarios:ro -v %cd%/logs:/app/logs -v %cd%/reports:/app/reports local/llm-tests:latest python run_tests.py --config /app/config/config.json
+  docker run --rm \
+    -v $PWD/config:/app/config:ro \
+    -v $PWD/scenarios:/app/scenarios:ro \
+    -v $PWD/logs:/app/logs \
+    -v $PWD/reports:/app/reports \
+    local/llm-tests:latest \
+    python run_tests.py --config /app/config/config.backend.json
   ```
-  En PowerShell usa $PWD en lugar de %cd%.
+  En Windows PowerShell usa ${PWD} o %cd% en lugar de $PWD.
 
 7) Limpieza
 - Detén y elimina contenedores con:

@@ -26,6 +26,15 @@ def export_markdown(path: str, summary: Dict[str, Any]) -> None:
     if score:
         lines.append(f"- Score: avg {score.get('avg',0):.3f} | std {score.get('std',0):.3f}\n")
 
+    # Benchmarks entre agentes (si hay más de uno)
+    if len(summary.get("by_agent", {})) > 1:
+        lines.append("\n## Benchmark entre modelos (por agente)\n")
+        lines.append("- Comparativa rápida de score y latencia promedio\n")
+        for agent, data in summary.get("by_agent", {}).items():
+            lat = data.get('latency', {})
+            score = data.get('score', {})
+            lines.append(f"  - {agent}: score_avg={score.get('avg',0):.3f}, lat_avg={lat.get('avg',0):.3f}s, ok={data.get('ok_rate',0.0):.2%}, throughput={data.get('throughput_rps',0):.3f} req/s\n")
+
     lines.append("\n## Por agente\n")
     for agent, data in summary.get("by_agent", {}).items():
         lines.append(f"### {agent}\n")

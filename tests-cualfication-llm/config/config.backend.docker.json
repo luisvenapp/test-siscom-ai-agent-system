@@ -1,30 +1,16 @@
 {
-  "iterations": 10,
+  "iterations": 5,
   "concurrency": 1,
-  "timeout_seconds": 120,
+  "timeout_seconds": 60,
   "log_dir": "logs",
   "reports_dir": "reports",
   "scenarios_dir": "scenarios",
   "agents": [
     {
-      "name": "ollama_llama3_8b",
-      "type": "ollama",
-      "base_url": "http://localhost:11434",
-      "model": "llama3:8b",
-      "parameters": {"temperature": 0.2, "top_p": 0.9, "num_predict": 512}
-    },
-    {
       "name": "backend_http_completion",
       "type": "http",
-      "base_url": "http://localhost:8001/v1/test-completion",
+      "base_url": "http://host.docker.internal:8001/v1/test-completion",
       "parameters": {"temperature": 0.2}
-    },
-    {
-      "name": "cli_local_agent",
-      "type": "cli",
-      "cmd": "python",
-      "args": ["-c", "print(input())"],
-      "prompt_stdin": true
     }
   ],
   "rubrics": {

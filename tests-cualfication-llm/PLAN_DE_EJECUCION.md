@@ -1,4 +1,23 @@
-# Plan de ejecución por fases
+# Plan de ejecución resumido
+
+- Paso 1: Smoke-test CLI
+  - `cd tests-cualfication-llm`
+  - `python run_tests.py --config config/config.cli.json`
+
+- Paso 2: Endpoint de completion en backend
+  - Asegúrate de levantar el backend en 8001
+  - Verifica `/v1/test-completion` con un POST: `{ "prompt": "Hola" }`
+
+- Paso 3: Pruebas contra backend
+  - `python run_tests.py --config config/config.backend.json`
+
+- Paso 4: Docker
+  - CLI: `docker compose -f docker-compose.cli.yml up --build`
+  - Backend: `docker compose -f docker-compose.backend.yml up --build`
+
+- Paso 5: Revisión de artefactos
+  - `logs/` y `reports/` en `tests-cualfication-llm`
+
 
 Objetivo: ejecutar y validar el sistema paso a paso, desde un smoke test aislado hasta pruebas completas con backends reales, ajustando rúbricas y escenarios con base en los resultados.
 

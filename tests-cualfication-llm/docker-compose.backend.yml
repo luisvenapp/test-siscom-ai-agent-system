@@ -1,0 +1,17 @@
+version: '3.8'
+services:
+  llm-tests-backend:
+    build: .
+    image: local/llm-tests:latest
+    container_name: llm-tests-backend
+    environment:
+      - PYTHONUNBUFFERED=1
+    volumes:
+      - ./config:/app/config:ro
+      - ./scenarios:/app/scenarios:ro
+      - ./logs:/app/logs
+      - ./reports:/app/reports
+    # Permite que el contenedor alcance servicios en el host
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    command: ["python", "run_tests.py", "--config", "/app/config/config.backend.json"]

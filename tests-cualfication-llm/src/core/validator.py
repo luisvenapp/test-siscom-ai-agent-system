@@ -1,6 +1,6 @@
 from typing import Dict, Any, List, Tuple
 
-RECOGNIZED_AGENT_TYPES = {"ollama", "http", "cli"}
+RECOGNIZED_AGENT_TYPES = {"ollama", "http", "cli", "openai", "deepseek", "gemini"}
 
 
 def validate_config(config: Dict[str, Any]) -> List[str]:
@@ -31,6 +31,15 @@ def validate_config(config: Dict[str, Any]) -> List[str]:
                     msgs.append(f"agent[{idx}] ollama sin base_url")
                 if not a.get("model"):
                     msgs.append(f"agent[{idx}] ollama sin model")
+            if typ == "openai":
+                if not (a.get("model") or a.get("parameters", {}).get("model")):
+                    msgs.append(f"agent[{idx}] openai sin model")
+            if typ == "deepseek":
+                if not (a.get("model") or a.get("parameters", {}).get("model")):
+                    msgs.append(f"agent[{idx}] deepseek sin model")
+            if typ == "gemini":
+                if not a.get("model"):
+                    msgs.append(f"agent[{idx}] gemini sin model")
             if typ == "cli":
                 if not a.get("cmd"):
                     msgs.append(f"agent[{idx}] cli sin cmd")

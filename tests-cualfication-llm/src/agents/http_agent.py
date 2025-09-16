@@ -9,9 +9,17 @@ class HttpAgent(BaseAgent):
         base_url = self.config.get("base_url")
         headers = self.config.get("headers", {})
         params = self.config.get("parameters", {})
+        schema = self.config.get("schema", "simple")
         if not base_url:
             return {"ok": False, "error": "base_url no configurado"}
-        payload = {"prompt": prompt, **params}
+        if schema == "openai":
+            model = params.get("model", "local-model")
+            payload = {"model": model, "messages": [{"role": "user", "content": prompt}]}
+            for k in ("temperature", "top_p", "max_tokens"):
+                if k in params:
+                    payload[k] = params[k]
+        else:
+            payload = {"prompt": prompt, **params}
         data = json.dumps(payload).encode("utf-8")
         req = urllib.request.Request(base_url, data=data, headers={"Content-Type": "application/json", **headers})
         try:

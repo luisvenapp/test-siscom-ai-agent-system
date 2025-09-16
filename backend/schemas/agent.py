@@ -140,7 +140,6 @@ class InputState(TypedDict):
     final_analysis: Optional[dict]
     error: Optional[str]
     user_query: Optional[str]
-    answer: Optional[str]
 
 
 class OutputState(TypedDict):

@@ -46,9 +46,12 @@ def aggregate_runs(run_records: List[Dict[str, Any]]) -> Dict[str, Any]:
     by_agent_case = defaultdict(list)  # key: (agent, scenario, case_id)
 
     for r in run_records:
-        by_agent[r['agent']].append(r)
-        by_scenario[r['scenario']].append(r)
-        by_agent_case[(r['agent'], r['scenario'], r['case_id'])].append(r)
+        a = r.get('agent', '__unknown__')
+        s = r.get('scenario', '__unknown__')
+        c = r.get('case_id', '__unknown__')
+        by_agent[a].append(r)
+        by_scenario[s].append(r)
+        by_agent_case[(a, s, c)].append(r)
 
     summary = {
         "by_agent": {k: _summarise(v) for k, v in by_agent.items()},

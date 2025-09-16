@@ -9,6 +9,9 @@ from ..agents.base import BaseAgent
 from ..agents.ollama_agent import OllamaAgent
 from ..agents.http_agent import HttpAgent
 from ..agents.cli_agent import CliAgent
+from ..agents.openai_agent import OpenAIAgent
+from ..agents.deepseek_agent import DeepseekAgent
+from ..agents.gemini_agent import GeminiAgent
 from ..metrics.metrics import keyword_coverage, format_checks, exact_match_any, qualitative_scoring, aggregate_scores
 
 
@@ -16,6 +19,9 @@ AGENT_TYPES = {
     "ollama": OllamaAgent,
     "http": HttpAgent,
     "cli": CliAgent,
+    "openai": OpenAIAgent,
+    "deepseek": DeepseekAgent,
+    "gemini": GeminiAgent,
 }
 
 
@@ -46,12 +52,31 @@ class Orchestrator:
     def _run_single(self, agent: BaseAgent, scenario: Dict[str, Any], case: Dict[str, Any], i: int, timeout: float, weights: Dict[str, float]) -> Dict[str, Any]:
         prompt = case.get("prompt", "")
         expected = case.get("expected", {})
+        # Prioriza reintentos por agente si se especifica; si no, usa el global
+        retries = int(getattr(agent, 'config', {}).get('retries', self.config.get("max_model_fail_retries", 0)))
         try:
-            t0 = time.perf_counter()
-            result = agent.infer(prompt, timeout)
-            elapsed = time.perf_counter() - t0
-        except Exception as e:
-            result = {"ok": False, "error": str(e)}
+            retries = int(retries)
+        except Exception:
+            retries = 0
+        attempt = 0
+        last_exc = None
+        t0 = time.perf_counter()
+        while attempt <= retries:
+            try:
+                start = time.perf_counter()
+                result = agent.infer(prompt, timeout)
+                elapsed = time.perf_counter() - start
+                break
+            except Exception as e:
+                last_exc = e
+                attempt += 1
+                if attempt > retries:
+                    result = {"ok": False, "error": str(last_exc)}
+                    elapsed = time.perf_counter() - t0
+                    break
+        else:
+            # safety fallback
+            result = {"ok": False, "error": "unknown error"}
             elapsed = timeout
 
         ok = result.get("ok", False)
@@ -123,13 +148,16 @@ class Orchestrator:
         timeout = float(self.config.get("timeout_seconds", 120))
         weights = self.config.get("rubrics", {}).get("weights", {})
         concurrency = int(self.config.get("concurrency", 1))
+        agent_execution = self.config.get("agent_execution", "sequential").lower()
+        within_agent_concurrency = int(self.config.get("within_agent_concurrency", concurrency))
 
         scenarios = load_scenarios(self.scenarios_dir)
         agents = self.build_agents()
 
         all_records: List[Dict[str, Any]] = []
 
-        if concurrency > 1:
+        if agent_execution == "parallel" and concurrency > 1:
+            # Ejecuta todas las combinaciones en paralelo (posible mezcla entre agentes)
             with ThreadPoolExecutor(max_workers=concurrency) as ex:
                 futures = []
                 for agent in agents:
@@ -144,12 +172,27 @@ class Orchestrator:
                     except Exception as e:
                         all_records.append({"ok": False, "error": str(e)})
         else:
+            # Secuencial por agente; si concurrency>1, paraleliza solo dentro del agente actual
             for agent in agents:
-                for scenario in scenarios:
-                    for case in scenario.get("cases", []):
-                        for i in range(1, iterations + 1):
-                            rec = self._run_single(agent, scenario, case, i, timeout, weights)
-                            all_records.append(rec)
+                if within_agent_concurrency > 1:
+                    with ThreadPoolExecutor(max_workers=within_agent_concurrency) as ex:
+                        futures = []
+                        for scenario in scenarios:
+                            for case in scenario.get("cases", []):
+                                for i in range(1, iterations + 1):
+                                    futures.append(ex.submit(self._run_single, agent, scenario, case, i, timeout, weights))
+                        for fut in as_completed(futures):
+                            try:
+                                rec = fut.result()
+                                all_records.append(rec)
+                            except Exception as e:
+                                all_records.append({"ok": False, "error": str(e)})
+                else:
+                    for scenario in scenarios:
+                        for case in scenario.get("cases", []):
+                            for i in range(1, iterations + 1):
+                                rec = self._run_single(agent, scenario, case, i, timeout, weights)
+                                all_records.append(rec)
 
         # Persistimos resultados crudos
         raw_path = os.path.join(self.reports_dir, f"raw_results__{self.timestamp}.json")

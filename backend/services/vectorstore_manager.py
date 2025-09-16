@@ -1,6 +1,6 @@
 from typing import List, Optional, Tuple, Union, Any
-# from langchain_huggingface import HuggingFaceEmbeddings
-# from db.pg_vector import PGVector
+from langchain_community.embeddings import HuggingFaceEmbeddings
+from db.pg_vector import PGVector
 from langchain_core.documents import Document
 from conf import settings
 from core.logging_config import get_logger

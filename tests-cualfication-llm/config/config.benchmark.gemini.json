@@ -1,0 +1,28 @@
+{
+  "iterations": 10,
+  "concurrency": 1,
+  "within_agent_concurrency": 1,
+  "agent_execution": "sequential",
+  "timeout_seconds": 120,
+  "max_model_fail_retries": 2,
+  "log_dir": "logs",
+  "reports_dir": "reports",
+  "scenarios_dir": "scenarios",
+  "agents": [
+    {"name": "gemini_25_flash", "type": "gemini", "model": "gemini-2.5-flash", "parameters": {"temperature": 0.2, "top_p": 0.95}},
+    {"name": "gemini_25_pro",   "type": "gemini", "model": "gemini-2.5-pro",   "parameters": {"temperature": 0.2, "top_p": 0.95}},
+    {"name": "gemini_20_flash", "type": "gemini", "model": "gemini-2.0-flash", "parameters": {"temperature": 0.2, "top_p": 0.95}},
+    {"name": "gemini_20_pro",   "type": "gemini", "model": "gemini-2.0-pro",   "parameters": {"temperature": 0.2, "top_p": 0.95}}
+  ],
+  "rubrics": {
+    "weights": {
+      "exactitud": 0.35,
+      "completitud": 0.2,
+      "relevancia": 0.2,
+      "claridad": 0.15,
+      "formato": 0.1,
+      "penalizacion_tiempo": -0.05
+    },
+    "thresholds": {"aprobado": 0.7, "excelente": 0.9}
+  }
+}
