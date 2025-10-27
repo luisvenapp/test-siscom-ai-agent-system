@@ -4,7 +4,7 @@ import sys
 import argparse
 from src.core.utils import read_json, ensure_dir, expand_env
 from src.core.orchestrator import Orchestrator
-from src.reporting.aggregator import aggregate_runs
+from src.reporting.aggregator import aggregate_runs, build_model_selection
 from src.core.scenario_loader import load_scenarios
 from src.core.validator import validate_config, validate_scenarios
 from src.reporting.exporters import export_json, export_markdown, export_csv
@@ -89,7 +89,20 @@ def main():
     result = orch.run()
 
     # Agregación
-    summary = aggregate_runs(result["records"])
+    # Aggregate with optional cost and error breakdown from config
+    agg_opts = {}
+    cost_map = (config.get("cost_per_1k_output_tokens") or {}).copy()
+    if cost_map:
+        # keys should be agent names in results, map can also be model aliases
+        agg_opts["cost_per_1k_output_tokens"] = cost_map
+    if bool(config.get("include_error_breakdown", False)):
+        agg_opts["include_error_breakdown"] = True
+
+    summary = aggregate_runs(result["records"], options=agg_opts)
+
+    # Build model selection section and attach into summary
+    decision_cfg = config.get("model_selection", {}) or {}
+    summary["model_selection"] = build_model_selection(summary, decision_cfg)
 
     reports_dir = os.path.join(BASE_DIR, config.get("reports_dir", "reports"))
     ensure_dir(reports_dir)
@@ -105,6 +118,7 @@ def main():
     # Plotly dashboard (HTML)
     html_path = os.path.join(reports_dir, f"dashboard__{result['timestamp']}.html")
     export_plotly_dashboard_html(html_path, summary, title=f"LLM Benchmark Dashboard — {result['timestamp']}", raw_records=result.get("records", []))
+
 
     print("Pruebas completadas.")
     print(f"Resumen JSON: {json_path}")
