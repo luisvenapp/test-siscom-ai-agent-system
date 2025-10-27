@@ -1,0 +1,48 @@
+{
+  "iterations": 2,
+  "concurrency": 1,
+  "within_agent_concurrency": 1,
+  "agent_execution": "sequential",
+  "timeout_seconds": 240,
+  "max_model_fail_retries": 1,
+  "log_dir": "logs",
+  "reports_dir": "reports",
+  "scenarios_dir": "scenarios",
+  "agents": [
+    {"name": "ollama_llama4_109b", "type": "ollama", "base_url": "http://P-VEGEPRDALLM02.nlt.local:11434", "model": "aravhawk/llama4:109b", "parameters": {"temperature": 0.2, "top_p": 0.9, "num_predict": 512}},
+    {"name": "ollama_gpt_oss_120b", "type": "ollama", "base_url": "http://P-VEGEPRDALLM02.nlt.local:11434", "model": "gpt-oss:120b", "parameters": {"temperature": 0.2, "top_p": 0.9, "num_predict": 512}},
+    {"name": "ollama_mixtral_8x22b", "type": "ollama", "base_url": "http://P-VEGEPRDALLM02.nlt.local:11434", "model": "mixtral:8x22b", "parameters": {"temperature": 0.2, "top_p": 0.9, "num_predict": 512}},
+
+    {"name": "ollama_deepseek_r1_70b", "type": "ollama", "base_url": "http://P-VEGEPRDALLM02.nlt.local:11434", "model": "deepseek-r1:70b", "parameters": {"temperature": 0.2, "top_p": 0.9, "num_predict": 512}},
+    {"name": "ollama_llama3_3_70b", "type": "ollama", "base_url": "http://P-VEGEPRDALLM02.nlt.local:11434", "model": "llama3.3:70b", "parameters": {"temperature": 0.2, "top_p": 0.9, "num_predict": 512}},
+    {"name": "ollama_phi4_14b_fp16", "type": "ollama", "base_url": "http://P-VEGEPRDALLM02.nlt.local:11434", "model": "phi4:14b-fp16", "parameters": {"temperature": 0.2, "top_p": 0.9, "num_predict": 512}},
+    {"name": "ollama_mixtral_8x7b", "type": "ollama", "base_url": "http://P-VEGEPRDALLM02.nlt.local:11434", "model": "mixtral:8x7b", "parameters": {"temperature": 0.2, "top_p": 0.9, "num_predict": 512}},
+
+    {"name": "ollama_deepseek_r1_32b", "type": "ollama", "base_url": "http://P-VEGEPRDALLM02.nlt.local:11434", "model": "deepseek-r1:32b", "parameters": {"temperature": 0.2, "top_p": 0.9, "num_predict": 512}},
+    {"name": "ollama_qwen3_32b", "type": "ollama", "base_url": "http://P-VEGEPRDALLM02.nlt.local:11434", "model": "qwen3:32b", "parameters": {"temperature": 0.2, "top_p": 0.9, "num_predict": 512}},
+    {"name": "ollama_gemma3_27b", "type": "ollama", "base_url": "http://P-VEGEPRDALLM02.nlt.local:11434", "model": "gemma3:27b", "parameters": {"temperature": 0.2, "top_p": 0.9, "num_predict": 512}},
+    {"name": "ollama_devstral_24b", "type": "ollama", "base_url": "http://P-VEGEPRDALLM02.nlt.local:11434", "model": "devstral:24b", "parameters": {"temperature": 0.2, "top_p": 0.9, "num_predict": 512}},
+    {"name": "ollama_devstral_latest", "type": "ollama", "base_url": "http://P-VEGEPRDALLM02.nlt.local:11434", "model": "devstral:latest", "parameters": {"temperature": 0.2, "top_p": 0.9, "num_predict": 512}},
+    {"name": "ollama_gpt_oss_20b", "type": "ollama", "base_url": "http://P-VEGEPRDALLM02.nlt.local:11434", "model": "gpt-oss:20b", "parameters": {"temperature": 0.2, "top_p": 0.9, "num_predict": 512}},
+
+    {"name": "ollama_deepseek_r1_14b", "type": "ollama", "base_url": "http://P-VEGEPRDALLM02.nlt.local:11434", "model": "deepseek-r1:14b", "parameters": {"temperature": 0.2, "top_p": 0.9, "num_predict": 512}},
+    {"name": "ollama_qwen2_5_14b", "type": "ollama", "base_url": "http://P-VEGEPRDALLM02.nlt.local:11434", "model": "qwen2.5:14b", "parameters": {"temperature": 0.2, "top_p": 0.9, "num_predict": 512}},
+    {"name": "ollama_gemma3_12b", "type": "ollama", "base_url": "http://P-VEGEPRDALLM02.nlt.local:11434", "model": "gemma3:12b", "parameters": {"temperature": 0.2, "top_p": 0.9, "num_predict": 512}},
+    {"name": "ollama_gemma2_9b", "type": "ollama", "base_url": "http://P-VEGEPRDALLM02.nlt.local:11434", "model": "gemma2:9b", "parameters": {"temperature": 0.2, "top_p": 0.9, "num_predict": 512}},
+    {"name": "ollama_deepseek_r1_8b", "type": "ollama", "base_url": "http://P-VEGEPRDALLM02.nlt.local:11434", "model": "deepseek-r1:8b", "parameters": {"temperature": 0.2, "top_p": 0.9, "num_predict": 512}},
+    {"name": "ollama_llama3_8b", "type": "ollama", "base_url": "http://P-VEGEPRDALLM02.nlt.local:11434", "model": "llama3:8b", "parameters": {"temperature": 0.2, "top_p": 0.9, "num_predict": 512}},
+    {"name": "ollama_qwen2_5_7b", "type": "ollama", "base_url": "http://P-VEGEPRDALLM02.nlt.local:11434", "model": "qwen2.5:7b", "parameters": {"temperature": 0.2, "top_p": 0.9, "num_predict": 512}},
+    {"name": "ollama_phi3_5_3_8b", "type": "ollama", "base_url": "http://P-VEGEPRDALLM02.nlt.local:11434", "model": "phi3.5:3.8b", "parameters": {"temperature": 0.2, "top_p": 0.9, "num_predict": 512}}
+  ],
+  "rubrics": {
+    "weights": {
+      "exactitud": 0.35,
+      "completitud": 0.2,
+      "relevancia": 0.2,
+      "claridad": 0.15,
+      "formato": 0.1,
+      "penalizacion_tiempo": -0.05
+    },
+    "thresholds": {"aprobado": 0.7, "excelente": 0.9}
+  }
+}
